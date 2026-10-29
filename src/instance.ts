@@ -22,6 +22,7 @@ export class MiraboxWrapper implements SurfaceInstance {
 	readonly #surfaceId: string
 	readonly #context: SurfaceContext
 	private config: Record<string, any> = {}
+	readonly #ledValues: number[]
 	private brightness = 100
 	public get surfaceId(): string {
 		return this.#surfaceId
@@ -41,6 +42,7 @@ export class MiraboxWrapper implements SurfaceInstance {
 		this.#streamDock = new StreamDock(deviceInfo, device, model)
 		this.#surfaceId = surfaceId
 		this.#context = context
+		this.#ledValues = new Array<number>(this.#streamDock.ledArrayLength).fill(0)
 
 		this.#streamDock.on('error', (e) => context.disconnect(e as any))
 
@@ -180,7 +182,14 @@ export class MiraboxWrapper implements SurfaceInstance {
 				}
 			}
 
-			if (v > 0) {
+			if (this.#ledValues.length > 3) {
+				// multiple LEDs share one payload, so keep the other LEDs' colors
+				this.#ledValues.splice(output.id * 3, 3, ...(v > 0 ? hsvToRgb(h, s, v) : [0, 0, 0]))
+				await Promise.all([
+					this.#streamDock.setLedArray(this.#ledValues),
+					this.#streamDock.setLedBrightness(this.brightness),
+				])
+			} else if (v > 0) {
 				await Promise.all([
 					this.#streamDock.setLedArray(hsvToRgb(h, s, v)),
 					this.#streamDock.setLedBrightness(this.brightness),
