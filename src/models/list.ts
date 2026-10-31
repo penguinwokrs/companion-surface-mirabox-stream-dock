@@ -24,7 +24,6 @@ export interface StreamDockModelDefinition {
 	iconRotation: number
 	/** If set, the packet size will be overridden */
 	packetSize?: number
-	/** Number of bytes in the SETLB LED payload. If greater than 3, each led output id is the index of its RGB triplet */
 	ledArrayLength?: number
 
 	inputs: StreamDockInputDefinition[]

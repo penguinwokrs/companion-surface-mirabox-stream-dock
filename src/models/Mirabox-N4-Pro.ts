@@ -10,7 +10,6 @@ export const Mirabox_N4_ProDefinition: StreamDockModelDefinition = {
 			productIds: [0x1021],
 		},
 	],
-	// one RGB LED above each rotary encoder, sent as four RGB triplets in one SETLB payload
 	ledArrayLength: 12,
 	outputs: [
 		...N4_1234Definition.outputs,

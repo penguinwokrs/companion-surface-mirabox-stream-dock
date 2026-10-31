@@ -24,7 +24,6 @@ export class MiraboxWrapper implements SurfaceInstance {
 	private config: Record<string, any> = {}
 	readonly #ledValues: number[]
 	private brightness = 100
-	/** The N4 Pro firmware runs a rainbow animation when the SETLB payload is all zeros, so all off is LED brightness 0 instead */
 	get #ledsOff(): boolean {
 		return this.#ledValues.length > 3 && this.#ledValues.every((x) => x === 0)
 	}
@@ -194,7 +193,6 @@ export class MiraboxWrapper implements SurfaceInstance {
 			}
 
 			if (this.#ledValues.length > 3) {
-				// multiple LEDs share one payload, so keep the other LEDs' colors
 				this.#ledValues.splice(output.id * 3, 3, ...(v > 0 ? hsvToRgb(h, s, v) : [0, 0, 0]))
 				if (this.#ledsOff) {
 					await this.#streamDock.setLedBrightness(0)
